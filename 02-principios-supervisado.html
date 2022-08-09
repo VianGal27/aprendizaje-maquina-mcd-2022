@@ -2300,7 +2300,6 @@ Generalmente es una combinación de costos/beneficios del problema que tratamos,
 <p><strong>Observación</strong>: Generalmente el término variabilidad se refiere a la variación de un estimador alrededor de su valor esperado, cuando observamos sus distintas posibles estimadociones a los largo de varias muestras de entrenamiento. Podemos descomponer el segundo término de arriba como:</p>
 <p><span class="math display">\[ f_{\lim}(\mathbf{x}) - \hat{f_{\mathcal{L}}}(\mathbf{x}) = f_{\lim}(\mathbf{x}) - E(\hat{f_{\mathcal{L}}}(\mathbf{x})) + E(\hat{f_{\mathcal{L}}}(\mathbf{x})) - \hat{f_{\mathcal{L}}}(\mathbf{x})\]</span></p>
 <p>donde el valor esperado es sobre todas las muestras de entrenamiento de un tamaño fijo <span class="math inline">\(n\)</span> que podríamos obtener. El segundo término puede llamarse variabilidad, mientras que el primero es el sesgo que obtenemos al usar una muestra <span class="math inline">\(n\)</span> finita.</p>
-<p>En esta versión, una parte del sesgo puede deberse a que nuestro método no tiene capacidad suficiente para encontrar la forma correcta de <span class="math inline">\(f^*(x)\)</span>, incluso con datos completos (el primer término del sesgo), mientras que el segundo término del sesgo indica que con el tamaño de muestra <span class="math inline">\(n\)</span> que tenemos, su capacidad no se puede alcanzar.</p>
 </section>
 <section id="ejemplo-fuentes-de-error" class="level2" data-number="2.5">
 <h2 data-number="2.5" class="anchored" data-anchor-id="ejemplo-fuentes-de-error"><span class="header-section-number">2.5</span> Ejemplo: fuentes de error</h2>
@@ -2799,7 +2798,7 @@ Generalmente es una combinación de costos/beneficios del problema que tratamos,
 <span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>            <span class="fu">filter</span>(<span class="fu">str_detect</span>(predictor, <span class="st">"lineal|_óptimo"</span>)), </span>
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>            <span class="fu">aes</span>(<span class="at">y =</span> .pred, <span class="at">colour =</span> predictor), <span class="at">size =</span> <span class="fl">1.1</span>) <span class="sc">+</span></span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Lineal"</span>) </span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>g_1 <span class="sc">+</span> g_2 </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>g_1 <span class="sc">+</span> g_2 <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">'collect'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="02-principios-supervisado_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="864"></p>
 </div>

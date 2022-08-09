@@ -328,10 +328,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <hr>
 <p>Por el contrario, en el <strong>enfoque de aprendizaje</strong>, comenzamos con un conjunto de datos <strong>etiquetado</strong> (por una persona, por un método costoso, etc.), y utilizamos alguna estructura general para aprender a producir la respuesta a partir de las imágenes. Por ejemplo, en este caso podríamos una red convolucional sobre los valores de los pixeles de la imagen:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>reticulate<span class="sc">::</span><span class="fu">use_virtualenv</span>(<span class="st">"/opt/virtualenvs/mi_env"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># usamos los tres canales de la imagen</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>imagenes <span class="ot">&lt;-</span> <span class="fu">map</span>(path_full_imgs, <span class="sc">~</span> <span class="fu">image_load</span>(.x, <span class="at">target_size =</span> <span class="fu">c</span>(<span class="dv">64</span>, <span class="dv">64</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(keras)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># usamos los tres canales de la imagen</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>imagenes <span class="ot">&lt;-</span> <span class="fu">map</span>(path_full_imgs, <span class="sc">~</span> <span class="fu">image_load</span>(.x, <span class="at">target_size =</span> <span class="fu">c</span>(<span class="dv">64</span>, <span class="dv">64</span>)))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Loaded Tensorflow version 2.6.0</code></pre>
 </div>
