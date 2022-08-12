@@ -88,7 +88,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./99-referencias.html" rel="next">
+<link href="./04-lineales-ingenieria.html" rel="next">
 <link href="./02-principios-supervisado.html" rel="prev">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -174,6 +174,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./04-lineales-ingenieria.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Métodos lineales e ingenería de entradas</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./99-referencias.html" class="sidebar-item-text sidebar-link">Referencias</a>
   </div>
 </li>
@@ -227,11 +232,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>auto <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../datos/auto.csv"</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> auto[, <span class="fu">c</span>(<span class="st">'name'</span>, <span class="st">'weight'</span>,<span class="st">'year'</span>, <span class="st">'mpg'</span>, <span class="st">'displacement'</span>)]</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">peso_kg =</span> weight <span class="sc">*</span> <span class="fl">0.45359237</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">rendimiento_kpl =</span> mpg <span class="sc">*</span> (<span class="fl">1.609344</span> <span class="sc">/</span> <span class="fl">3.78541178</span>), </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  año <span class="ot">=</span> year)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># seleccionar variables y poner en sistema métrico</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>datos <span class="ot">&lt;-</span> auto <span class="sc">|&gt;</span> </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name, weight, year, mpg, displacement) <span class="sc">|&gt;</span> </span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">peso_kg =</span> weight <span class="sc">*</span> <span class="fl">0.45359237</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">rendimiento_kpl =</span> mpg <span class="sc">*</span> (<span class="fl">1.609344</span> <span class="sc">/</span> <span class="fl">3.78541178</span>), </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    año <span class="ot">=</span> year</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Vamos a separa en muestra de entrenamiento y de prueba estos datos. Podemos hacerlo como sigue (75% para entrenamiento aproximadamente en este caso, así obtenemos alrededor de 100 casos para prueba):</p>
 <div class="cell">
@@ -251,8 +259,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>Vamos a usar año y peso de los coches para predecir su rendimiento:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(datos_entrena, <span class="fu">aes</span>(<span class="at">x =</span> peso_kg, <span class="at">y =</span> rendimiento_kpl, <span class="at">colour =</span> año)) <span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(datos_entrena, </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> peso_kg, <span class="at">y =</span> rendimiento_kpl, <span class="at">colour =</span> año)) <span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="03-metodos-locales_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -265,39 +274,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>vmc_1 <span class="ot">&lt;-</span> <span class="fu">nearest_neighbor</span>(<span class="at">neighbors =</span> <span class="fu">tune</span>(), <span class="at">weight_func =</span> <span class="st">"gaussian"</span>) <span class="sc">|&gt;</span>  </span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"kknn"</span>) <span class="sc">|&gt;</span>  </span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_mode</span>(<span class="st">"regression"</span>)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>receta_vmc <span class="ot">&lt;-</span> <span class="fu">recipe</span>(rendimiento_kpl <span class="sc">~</span> peso_kg <span class="sc">+</span> año, datos_entrena) <span class="sc">|&gt;</span> </span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_predictors</span>()) </span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>flujo_vecinos <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span>  </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(receta_vmc) <span class="sc">|&gt;</span> </span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(vmc_1)</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>vecinos_params <span class="ot">&lt;-</span> <span class="fu">parameters</span>(<span class="fu">neighbors</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">100</span>)))</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>vecinos_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(vecinos_params, <span class="at">levels =</span> <span class="dv">100</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>receta_vmc <span class="ot">&lt;-</span> <span class="fu">recipe</span>(</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  rendimiento_kpl <span class="sc">~</span> peso_kg <span class="sc">+</span> año, datos_entrena) <span class="sc">|&gt;</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">step_normalize</span>(<span class="fu">all_predictors</span>()) </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>flujo_vecinos <span class="ot">&lt;-</span> <span class="fu">workflow</span>() <span class="sc">|&gt;</span>  </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_recipe</span>(receta_vmc) <span class="sc">|&gt;</span> </span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_model</span>(vmc_1)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># definir parámetros que nos interesa explorar</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>vecinos_params <span class="ot">&lt;-</span> <span class="fu">parameters</span>(<span class="fu">neighbors</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">100</span>)))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># definir cuáles valores de los parámetros exploramos</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>vecinos_grid <span class="ot">&lt;-</span> <span class="fu">grid_regular</span>(vecinos_params, <span class="at">levels =</span> <span class="dv">100</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>mis_metricas <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rmse)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>En la siguiente gráfica mostramos cómo cambia el error de los las predicciones sobre la muestra de prueba separada de la de entrenamiento. En este caso le llamaremos <em>muestra de validación</em> porque más adelante veremos que puede ser conveniente dividir en entrenamiento-validación-prueba en lugar de usar sólo 2 particiones:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mis_metricas <span class="ot">&lt;-</span> <span class="fu">metric_set</span>(rmse)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>r_split <span class="ot">&lt;-</span> <span class="fu">manual_rset</span>(<span class="fu">list</span>(datos_split), <span class="st">"validación"</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>vecinos_eval_tbl <span class="ot">&lt;-</span> <span class="fu">tune_grid</span>(flujo_vecinos,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">resamples =</span> r_split,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">grid =</span> vecinos_grid,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">metrics =</span> mis_metricas) </span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>vecinos_ajustes_tbl <span class="ot">&lt;-</span> vecinos_eval_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(.metrics)) <span class="sc">%&gt;%</span> </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, neighbors, .metric, .estimate)</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(vecinos_ajustes_tbl, <span class="fu">aes</span>(<span class="at">x =</span> neighbors, <span class="at">y =</span> .estimate)) <span class="sc">+</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>r_split <span class="ot">&lt;-</span> <span class="fu">manual_rset</span>(<span class="fu">list</span>(datos_split), <span class="st">"validación"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>vecinos_eval_tbl <span class="ot">&lt;-</span> <span class="fu">tune_grid</span>(flujo_vecinos,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">resamples =</span> r_split,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">grid =</span> vecinos_grid,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">metrics =</span> mis_metricas) </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>vecinos_ajustes_tbl <span class="ot">&lt;-</span> vecinos_eval_tbl <span class="sc">|&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(<span class="at">cols =</span> <span class="fu">c</span>(.metrics)) <span class="sc">|&gt;</span> </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(id, neighbors, .metric, .estimate)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(vecinos_ajustes_tbl, <span class="fu">aes</span>(<span class="at">x =</span> neighbors, <span class="at">y =</span> .estimate)) <span class="sc">+</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Error de validación"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Vecinos"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="03-metodos-locales_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="384"></p>
 </div>
 </div>
-<p>Donde obtenemos más o menos lo que esperaríamos: modelos con muy pocos vecinos o demasiados vecinos se desempeñan relativamente mal. Podemos visualizar nuestras predicciones y los datos de entrenamiento de la siguiente forma:</p>
+<p>Donde obtenemos más o menos lo que esperaríamos: modelos con muy pocos vecinos o demasiados vecinos se desempeñan relativamente mal.</p>
+<p>Seleccionaremos el mejor modelo según el error estimado de predicción y visualizamos primero nuestras predicciones y los datos de entrenamiento de la siguiente forma:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mejor_rmse <span class="ot">&lt;-</span> <span class="fu">select_best</span>(vecinos_eval_tbl, <span class="at">metric =</span> <span class="st">"rmse"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ajuste_1 <span class="ot">&lt;-</span> <span class="fu">finalize_workflow</span>(flujo_vecinos, mejor_rmse) <span class="sc">|&gt;</span> </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit</span>(datos_entrena)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>dat_graf <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">peso_kg =</span> <span class="fu">seq</span>(<span class="dv">900</span>, <span class="dv">2200</span>, <span class="at">by =</span> <span class="dv">10</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>dat_graf <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">peso_kg =</span> <span class="fu">seq</span>(<span class="dv">900</span>, <span class="dv">2200</span>, <span class="at">by =</span> <span class="dv">10</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossing</span>(<span class="fu">tibble</span>(año <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">70</span>, <span class="dv">75</span>, <span class="dv">80</span>)))</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>dat_graf <span class="ot">&lt;-</span> dat_graf <span class="sc">%&gt;%</span> </span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred_1 =</span> <span class="fu">predict</span>(ajuste_1, dat_graf) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(.pred))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>dat_graf <span class="ot">&lt;-</span> dat_graf <span class="sc">|&gt;</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pred_1 =</span> <span class="fu">predict</span>(ajuste_1, dat_graf) <span class="sc">|&gt;</span> <span class="fu">pull</span>(.pred))</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(datos_entrena, <span class="fu">aes</span>(<span class="at">x =</span> peso_kg, <span class="at">group =</span> año, <span class="at">colour =</span> año)) <span class="sc">+</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> rendimiento_kpl), <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> </span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> dat_graf, <span class="fu">aes</span>(<span class="at">y =</span> pred_1),  <span class="at">size =</span> <span class="fl">1.2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -335,9 +350,9 @@ Maldición de la dimensionalidad
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fun_exp <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">exp</span>(<span class="sc">-</span><span class="dv">8</span> <span class="sc">*</span> <span class="fu">sum</span>(x <span class="sc">^</span> <span class="dv">2</span>))</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="sc">~</span> <span class="fu">runif</span>(<span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x) <span class="sc">|&gt;</span> </span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">map_dbl</span>(x, fun_exp))</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">x_1 =</span> <span class="fu">map_dbl</span>(x, <span class="dv">1</span>), <span class="at">x_2 =</span> <span class="fu">map_dbl</span>(x, <span class="dv">2</span>)), </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(dat <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">x_1 =</span> <span class="fu">map_dbl</span>(x, <span class="dv">1</span>), <span class="at">x_2 =</span> <span class="fu">map_dbl</span>(x, <span class="dv">2</span>)), </span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> x_1, <span class="at">y =</span> x_2, <span class="at">colour =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="03-metodos-locales_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="480"></p>
@@ -345,7 +360,7 @@ Maldición de la dimensionalidad
 </div>
 <p>La mejor predicción en <span class="math inline">\(x_0 = (0,0)\)</span> es <span class="math inline">\(f((0,0)) = 1\)</span>. El vecino más cercano al origen es</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">dist_origen =</span> <span class="fu">map_dbl</span>(x, <span class="sc">~</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(.x<span class="sc">^</span><span class="dv">2</span>)))) <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">dist_origen =</span> <span class="fu">map_dbl</span>(x, <span class="sc">~</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(.x<span class="sc">^</span><span class="dv">2</span>)))) <span class="sc">|&gt;</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dist_origen)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>mas_cercano <span class="ot">&lt;-</span> dat[<span class="dv">1</span>, ]</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>mas_cercano</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -364,9 +379,9 @@ Maldición de la dimensionalidad
 <p>Ahora intentamos hacer lo mismo para dimensión <span class="math inline">\(p=8\)</span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="sc">~</span> <span class="fu">runif</span>(<span class="dv">8</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x) <span class="sc">|&gt;</span> </span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>       <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">map_dbl</span>(x, fun_exp))</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">dist_origen =</span> <span class="fu">map_dbl</span>(x, <span class="sc">~</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(.x<span class="sc">^</span><span class="dv">2</span>)))) <span class="sc">%&gt;%</span> </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">dist_origen =</span> <span class="fu">map_dbl</span>(x, <span class="sc">~</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(.x<span class="sc">^</span><span class="dv">2</span>)))) <span class="sc">|&gt;</span> </span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(dist_origen)</span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>mas_cercano <span class="ot">&lt;-</span> dat[<span class="dv">1</span>, ]</span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>mas_cercano</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -410,13 +425,13 @@ Maldición de la dimensionalidad
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>simular_datos <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">p =</span> <span class="dv">40</span>){</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>,  <span class="sc">~</span> <span class="fu">runif</span>(p, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">map_dbl</span>(x, fun_cuad)) </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">x =</span> x) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">map_dbl</span>(x, fun_cuad)) </span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    dat</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Por ejemplo para dimensión baja <span class="math inline">\(p=1\)</span> (nótese que una aproximación lineal es razonable):</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ejemplo <span class="ot">&lt;-</span> <span class="fu">simular_datos</span>(<span class="at">p =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">x =</span> <span class="fu">unlist</span>(x))</span>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ejemplo <span class="ot">&lt;-</span> <span class="fu">simular_datos</span>(<span class="at">p =</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">x =</span> <span class="fu">unlist</span>(x))</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ejemplo, <span class="fu">aes</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)) <span class="sc">+</span> <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -429,8 +444,8 @@ Maldición de la dimensionalidad
 <p>Ahora repetimos el proceso en dimensión <span class="math inline">\(p=40\)</span>: simulamos las entradas, y aplicamos un vecino más cercano</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>vmc_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(dat){</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span> </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">dist_origen =</span> <span class="fu">map_dbl</span>(x, <span class="sc">~</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(.x<span class="sc">^</span><span class="dv">2</span>)))) <span class="sc">%&gt;%</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    dat <span class="ot">&lt;-</span> dat <span class="sc">|&gt;</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">dist_origen =</span> <span class="fu">map_dbl</span>(x, <span class="sc">~</span> <span class="fu">sqrt</span>(<span class="fu">sum</span>(.x<span class="sc">^</span><span class="dv">2</span>)))) <span class="sc">|&gt;</span> </span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">arrange</span>(dist_origen)</span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        mas_cercano <span class="ot">&lt;-</span> dat[<span class="dv">1</span>, ]</span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        mas_cercano<span class="sc">$</span>y</span>
@@ -448,7 +463,7 @@ Maldición de la dimensionalidad
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">length</span>(dat<span class="sc">$</span>x[[<span class="dv">1</span>]])</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    dat_reg <span class="ot">&lt;-</span> <span class="fu">cbind</span>(</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> dat<span class="sc">$</span>y, </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="fu">matrix</span>(<span class="fu">unlist</span>(dat<span class="sc">$</span>x), <span class="at">ncol =</span> p, <span class="at">byrow=</span>T)) <span class="sc">%&gt;%</span> </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">x =</span> <span class="fu">matrix</span>(<span class="fu">unlist</span>(dat<span class="sc">$</span>x), <span class="at">ncol =</span> p, <span class="at">byrow=</span>T)) <span class="sc">|&gt;</span> </span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">as.data.frame</span>()</span>
 <span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    mod_lineal <span class="ot">&lt;-</span> <span class="fu">lm</span>(y <span class="sc">~</span> ., <span class="at">dat =</span> dat_reg)</span>
 <span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    origen <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">rep</span>(<span class="dv">0</span>, p), <span class="dv">1</span>, p))</span>
@@ -471,7 +486,7 @@ Maldición de la dimensionalidad
 <span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tibble</span>(<span class="at">rep =</span> i, </span>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">error =</span> <span class="fu">c</span>(<span class="fu">abs</span>(vmc_y <span class="sc">-</span> <span class="fl">0.5</span>), <span class="fu">abs</span>(reg_y <span class="sc">-</span> <span class="fl">0.5</span>)), </span>
 <span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">tipo =</span> <span class="fu">c</span>(<span class="st">"vmc"</span>, <span class="st">"regresion"</span>))</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">%&gt;%</span> bind_rows</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>()</span>
 <span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims, <span class="fu">aes</span>(<span class="at">x =</span> tipo, <span class="at">y =</span> error)) <span class="sc">+</span> <span class="fu">geom_boxplot</span>() </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="03-metodos-locales_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="480"></p>
@@ -479,7 +494,7 @@ Maldición de la dimensionalidad
 </div>
 <p>Así que típicamente el error de vecinos más cercanos es más alto que el de regresión. El error esperado es para vmc es más de doble que el de regresión:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>sims <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(tipo) <span class="sc">%&gt;%</span> </span>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>sims <span class="sc">|&gt;</span> <span class="fu">group_by</span>(tipo) <span class="sc">|&gt;</span> </span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">media_error =</span> <span class="fu">mean</span>(error)) <span class="sc">|&gt;</span> </span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -923,11 +938,11 @@ Maldición de la dimensionalidad
 <i class="callout-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
-Métodos locales
+Métodos locales sin estructura
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Los métodos localesa muchas veces no funcionan bien en dimensión alta. La razón es que:</p>
+<p>Los métodos locales muchas veces no funcionan bien en dimensión alta. La razón es que:</p>
 <ul>
 <li>El sesgo es alto, pues promediamos puntos muy lejanos al lugar donde queremos predecir (aunque tomemos pocos vecinos cercanos).</li>
 <li>En el caso de que encontremos unos pocos puntos cercanos, la varianza también puede ser alta porque promediamos relativamente pocos vecinos.</li>
@@ -1045,8 +1060,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./99-referencias.html" class="pagination-link">
-        <span class="nav-page-text">Referencias</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./04-lineales-ingenieria.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Métodos lineales e ingenería de entradas</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
