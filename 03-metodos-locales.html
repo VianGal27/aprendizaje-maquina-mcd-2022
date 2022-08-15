@@ -343,7 +343,12 @@ Maldición de la dimensionalidad
 <p>En dimensión alta, para la mayoría de las <span class="math inline">\(\mathbf{x}\)</span> donde queremos hacer predicciones típicamente no existen vecinos cercanos, aún para conjuntos de entrenamiento muy grandes.</p>
 </div>
 </div>
-<p>Esto implica que incluso con <span class="math inline">\(k\)</span> chica (que produce sobreajuste) sufrimos simultáneamente de sesgo (por extrapolación a regiones no relevantes). Esto implica que en estos casos (que son muy comunes) métodos locales no funcionan bien independientemente de cómo afinemos el algoritmo.</p>
+<p>Esto implica que para tamaños típicos <span class="math inline">\(n\)</span> de muestra de entrenamiento:</p>
+<ul>
+<li><p>Si tomamos <span class="math inline">\(k\)</span> chica, el sesgo por especificación es chico (con muestras muy grandes), pero el sesgo de estimación puede ser <em>grande</em> pues estamos de todas formas obigados a buscar vecinos lejos de donde queremos predecir.</p></li>
+<li><p>Si tomamos <span class="math inline">\(k\)</span> más grande, podemos quizá reducir sesgo de estimación, pero entonces el sesgo por especificación puede ser más grande (pues promediamos sobre regiones relativamente grandes), y perdemos la supuesta ventaja del método local.</p></li>
+<li><p>Para que una <span class="math inline">\(k\)</span> chica tenga sesgo de estimación bajo, el tamaño <span class="math inline">\(n\)</span> de la muestra de entrenamiento tiene que ser gigantesca.</p></li>
+</ul>
 <section id="ejemplo-1" class="level4 unnumbered">
 <h4 class="unnumbered anchored" data-anchor-id="ejemplo-1">Ejemplo</h4>
 <p>Consideremos que la salida Y es determinística <span class="math inline">\(Y = e^{-8\sum_{j=1}^p x_j^2}\)</span>. Vamos a usar 1-vecino más cercano para hacer predicciones, con una muestra de entrenamiento de 1000 casos. Generamos $x^{i}’s uniformes en <span class="math inline">\([ 1,1]\)</span>, para <span class="math inline">\(p = 2\)</span>, y calculamos la respuesta <span class="math inline">\(Y\)</span> para cada caso:</p>
